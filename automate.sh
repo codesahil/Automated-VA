@@ -121,11 +121,14 @@ do
 	if [ "${PORTS}" ]; then
         mkdir -p result/tcp/ssl
         echo "---------------------------------------------------------"
-        echo "[***]Running SMTP Scripts[***]"
+        echo "[***]Running SSL Scripts[***]"
         echo "---------------------------------------------------------"
         nmap -Pn -p ${PORTS} --script=ssl-enum-ciphers $host > result/tcp/ssl/ssl_ciphers_$host.txt
         nmap -Pn -p ${PORTS} --script=ssl-heartbleed $host > result/tcp/ssl/ssl_heartbleed_$host.txt
         nmap -Pn -p ${PORTS} --script=ssl-ccs-injection $host >  result/tcp/ssl/ssl_css_injection_$host.txt
+        echo "---------------------------------------------------------"
+        echo "[***]Running TestSSL Scripts for VA [***]"
+        echo "---------------------------------------------------------"
         if [ ! -d "testssl.sh" ]; then
         	git clone https://github.com/drwetter/testssl.sh
         	bash /testssl.sh/testssl.sh -U $host >> testssl_output
