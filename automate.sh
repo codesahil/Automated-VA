@@ -42,8 +42,8 @@ do
     echo "---------------------------------------------------------"
     echo "[**]If the scan runs very slow edit the script and add -T4 switch[**]"
     echo "---------------------------------------------------------"
-    #nmap -sSV -p 1-65535 $host -oA result/tcp/$host
-    nmap --top-ports 100 $host -oA result/tcp/$host #for fast testing purpose
+    nmap -sSV -p 1-65535 $host -oA result/tcp/$host
+    #nmap --top-ports 100 $host -oA result/tcp/$host #for fast testing purpose
     echo "------------------------Saving the results in HTML file-------------------------"
     bash nmap-parse-output/nmap-parse-output result/tcp/$host.xml html >> result/scan.html
     echo "-------------------------Running EyeWitness-------------------------------------"
