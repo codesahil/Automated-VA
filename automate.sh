@@ -6,8 +6,21 @@ echo "--------------------------"
     echo "---------------------------------------------------------"
     sudo apt-get install xsltproc # To convert nmap result to tabular html format from xml format
     if [ ! -d "nmap-parse-output" ]; then
+    	echo "*** Installing Nmap XML to HTML Parser ***"
     	git clone https://github.com/ernw/nmap-parse-output
     fi
+
+    if [ ! -d "scipag_vulscan" ]; then
+    	echo "*** Installing Vulscan NSE ***"
+    	git clone https://github.com/scipag/vulscan scipag_vulscan
+		ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan
+    fi
+
+    if [ ! -d "EyeWitness" ]; then
+    	echo "*** Installing EyeWitness ***"
+    	git clone https://github.com/FortyNorthSecurity/EyeWitness
+    	bash EyeWitness/setup/setup.sh
+	fi
     	
 if [ ! -f $1 ]
 then
@@ -18,6 +31,7 @@ if [ ! -d "result" ]; then
   mkdir result
   mkdir result/tcp
   mkdir result/tcp/aggresive
+  mkdir result/tcp/vulscan
   mkdir result/udp
 fi
 while read -r line
@@ -32,6 +46,8 @@ do
     nmap --top-ports 100 $host -oA result/tcp/$host #for fast testing purpose
     echo "------------------------Saving the results in HTML file-------------------------"
     bash nmap-parse-output/nmap-parse-output result/tcp/$host.xml html >> result/scan.html
+    echo "-------------------------Running EyeWitness-------------------------------------"
+    python EyeWitness/EyeWitness.py -f result/tcp/$host.xml 
     #Agressive Scan
     PORTS=$(grep open "result/tcp/$host.nmap" 2>/dev/null | cut -d'/' -f1 | perl -pe 's|\n|,|g' | sed 's/,$//g')
     if [ -n "${PORTS}" ]; then
@@ -40,7 +56,11 @@ do
     	echo "---------------------------------------------------------"
         nmap -A -Pn -sT -p ${PORTS} $host -oA result/tcp/aggresive/$host
         grep 'tcp.*open' result/tcp/aggresive/$host.nmap
+        echo "[**] Running VulScan Scan on Open Ports [**]"
+    	echo "---------------------------------------------------------"
+    	nmap -sV --script=vulscan/vulscan.nse -p ${PORTS} $host -oA result/tcp/vulscan/$host
 	fi
+
 	#SMB
 	PORTS=$(grep 'open.*netbios' "result/tcp/$host.nmap" 2>/dev/null | cut -d'/' -f1 | perl -pe 's|\n|,|g' | sed 's/,$//g')
   
