@@ -2,7 +2,7 @@
 echo "------------------------Running NMAP Automation Script---------------------------------"
 if [ ! -f $1 ]
 then
-    echo "Error: Must supply file"
+    echo "Error: Must supply IP List file"
     exit
 fi
 if [ ! -d "result" ]; then
