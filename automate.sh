@@ -1,8 +1,17 @@
 #/bin/bash
-echo "------------------------Running NMAP Automation Script---------------------------------"
+echo "------------------------Running VA Automation Script---------------------------------"
+echo "--------------------------"
+    echo "*** Installing the Dependencies or Tools ***"
+    echo "---------------------------------------------------------"
+    echo "---------------------------------------------------------"
+    sudo apt-get install xsltproc # To convert nmap result to tabular html format from xml format
+    if [ ! -d "nmap-parse-output" ]; then
+    	git clone https://github.com/ernw/nmap-parse-output
+    fi
+    	
 if [ ! -f $1 ]
 then
-    echo "Error: Must supply IP List file"
+    echo "Error: Must supply file"
     exit
 fi
 if [ ! -d "result" ]; then
@@ -19,8 +28,10 @@ do
     echo "---------------------------------------------------------"
     echo "[**]If the scan runs very slow edit the script and add -T4 switch[**]"
     echo "---------------------------------------------------------"
-    nmap -sSV -p 1-65535 $host -oA result/tcp/$host
-    #nmap --top-ports 100 $host -oA result/tcp/$host #for fast testing purpose
+    #nmap -sSV -p 1-65535 $host -oA result/tcp/$host
+    nmap --top-ports 100 $host -oA result/tcp/$host #for fast testing purpose
+    echo "------------------------Saving the results in HTML file-------------------------"
+    bash nmap-parse-output/nmap-parse-output result/tcp/$host.xml html >> result/scan.html
     #Agressive Scan
     PORTS=$(grep open "result/tcp/$host.nmap" 2>/dev/null | cut -d'/' -f1 | perl -pe 's|\n|,|g' | sed 's/,$//g')
     if [ -n "${PORTS}" ]; then
