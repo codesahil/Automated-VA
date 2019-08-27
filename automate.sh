@@ -47,7 +47,7 @@ do
     echo "------------------------Saving the results in HTML file-------------------------"
     bash nmap-parse-output/nmap-parse-output result/tcp/$host.xml html >> result/scan.html
     echo "-------------------------Running EyeWitness-------------------------------------"
-    python EyeWitness/EyeWitness.py -f result/tcp/$host.xml --all-protocol
+    python EyeWitness/EyeWitness.py -d result/eyewitness -x result/tcp/$host.xml --all-protocol 
     #Agressive Scan
     PORTS=$(grep open "result/tcp/$host.nmap" 2>/dev/null | cut -d'/' -f1 | perl -pe 's|\n|,|g' | sed 's/,$//g')
     if [ -n "${PORTS}" ]; then
