@@ -13,7 +13,7 @@ echo "--------------------------"
     if [ ! -d "scipag_vulscan" ]; then
     	echo "*** Installing Vulscan NSE ***"
     	git clone https://github.com/scipag/vulscan scipag_vulscan
-		ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan
+	ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan
     fi
 
     if [ ! -d "EyeWitness" ]; then
@@ -30,6 +30,7 @@ fi
 if [ ! -d "result" ]; then
   mkdir result
   mkdir result/tcp
+  mkdir screenshots
   mkdir result/tcp/aggresive
   mkdir result/tcp/vulscan
   mkdir result/udp
@@ -47,7 +48,7 @@ do
     echo "------------------------Saving the results in HTML file-------------------------"
     bash nmap-parse-output/nmap-parse-output result/tcp/$host.xml html >> result/scan.html
     echo "-------------------------Running EyeWitness-------------------------------------"
-    python EyeWitness/EyeWitness.py -d result/eyewitness -x result/tcp/$host.xml --all-protocol 
+    python EyeWitness/EyeWitness.py -d screenshots/result_$host -x result/tcp/$host.xml --all-protocol 
     #Agressive Scan
     PORTS=$(grep open "result/tcp/$host.nmap" 2>/dev/null | cut -d'/' -f1 | perl -pe 's|\n|,|g' | sed 's/,$//g')
     if [ -n "${PORTS}" ]; then
